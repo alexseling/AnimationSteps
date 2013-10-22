@@ -31,7 +31,7 @@ namespace AnimationPipeline
         /// </summary>
         private Dictionary<string, int> bones = new Dictionary<string, int>();
 
-        private const float TinyLength = 1e-8f;
+        private const float TinyLength = 1e-7f;
         private const float TinyCosAngle = 0.9999999f;
 
         public override ModelContent Process(NodeContent input, ContentProcessorContext context)
@@ -111,7 +111,9 @@ namespace AnimationPipeline
 
                 foreach (KeyValuePair<string, AnimationChannel> channel in animation.Value.Channels)
                 {
+                    // Linked list of keyframes to process
                     LinkedList<AnimationClips.Keyframe> keyframes = new LinkedList<AnimationClips.Keyframe>();
+
                     // What is the bone index?
                     int boneIndex;
                     if (!bones.TryGetValue(channel.Key, out boneIndex))
@@ -133,9 +135,11 @@ namespace AnimationPipeline
                         newKeyframe.Rotation = Quaternion.CreateFromRotationMatrix(transform);
                         newKeyframe.Translation = transform.Translation;
 
+                        // Add keyframe to list to process
                         keyframes.AddLast(newKeyframe);
                     }
 
+                    // Process list, add resulting keyframes to the clip
                     LinearKeyframeReduction(keyframes);
                     foreach (AnimationClips.Keyframe k in keyframes)
                     {
@@ -164,7 +168,6 @@ namespace AnimationPipeline
                 if (next == null)
                     break;
 
-                // Determine nodes before and after the current node.
                 AnimationClips.Keyframe a = node.Previous.Value;
                 AnimationClips.Keyframe b = node.Value;
                 AnimationClips.Keyframe c = next.Value;

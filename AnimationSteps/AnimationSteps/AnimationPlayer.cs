@@ -14,6 +14,8 @@ namespace AnimationSteps
 
         private bool looping = false;
         private double speed = 1.0f;
+        private const double maxSpeed = 2;
+        private const double minSpeed = 0;
 
         private double time = 0;
 
@@ -48,6 +50,8 @@ namespace AnimationSteps
             if (mouseState.RightButton == ButtonState.Pressed)
             {
                 speed = ((height - mouseState.Y) / height) * 2;
+                if (speed < minSpeed) speed = minSpeed;
+                if (speed > maxSpeed) speed = maxSpeed;
             }
             time += delta * speed;
 
@@ -71,25 +75,42 @@ namespace AnimationSteps
                     keyframes[clip.GetBone(b).CurrentKeyframe + 1].Time <= time))
                 {
                     // Advance to the next keyframe
-                    clip.IncrementBoneKeyframe(b);
+                    clip.SetBoneKeyframe(b, clip.GetBone(b).CurrentKeyframe + 1);
                 }
 
                 //
                 // Update the bone
                 //
-
                 int c = clip.GetBone(b).CurrentKeyframe;
+                int n = clip.GetBone(b).NextKeyframe;
                 if (c >= 0)
                 {
-                    AnimationClips.Keyframe keyframe = keyframes[c];
+                    Quaternion rotation;
+                    Vector3 translation;
+
+                    AnimationClips.Keyframe keyframe1 = keyframes[c];
+                    AnimationClips.Keyframe keyframe2 = keyframes[n];
+
+                    if (c != n)
+                    {
+                        float t = (float)((time - keyframe1.Time) / (keyframe2.Time - keyframe1.Time));
+                        rotation = Quaternion.Slerp(keyframe1.Rotation, keyframe2.Rotation, t);
+                        translation = Vector3.Lerp(keyframe1.Translation, keyframe2.Translation, t);
+                    }
+                    else
+                    {
+                        rotation = keyframe1.Rotation;
+                        translation =  keyframe1.Translation;
+                    }
                     //AnimationClips.Keyframe keyframeNext = keyframes[c + 1];
 
                     /*clip.GetBone(b).Valid = true;
                     clip.GetBone(b).Rotation = keyframe.Rotation;
                     clip.GetBone(b).Translation = keyframe.Translation;*/
+
                     clip.SetBoneValid(b, true);
-                    clip.SetBoneRotation(b, keyframe.Rotation);
-                    clip.SetBoneTranslation(b, keyframe.Translation);
+                    clip.SetBoneRotation(b, rotation);
+                    clip.SetBoneTranslation(b, translation);
                 }
             }
         }

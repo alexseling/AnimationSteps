@@ -28,6 +28,7 @@ namespace XnaAux
             Quaternion Rotation { get; set; }
             Vector3 Translation { get; set; }
             int CurrentKeyframe { get; set; }
+            int NextKeyframe { get; set; }
         }
 
         /// <summary>
@@ -61,6 +62,7 @@ namespace XnaAux
                 private Vector3 translation;
 
                 public int CurrentKeyframe { get { return currentKeyframe; } set { currentKeyframe = value; } }
+                public int NextKeyframe { get { return nextKeyframe; } set { nextKeyframe = value; } }
                 public bool Valid { get { return valid; } set { valid = value; } }
                 public Quaternion Rotation { get { return rotation; } set { rotation = value; } }
                 public Vector3 Translation { get { return translation; } set { translation = value; } }
@@ -71,7 +73,18 @@ namespace XnaAux
 
             public int BoneCount { get { return boneCnt; } }
             public Bone GetBone(int b) { return boneInfos[b]; }
-            public void IncrementBoneKeyframe(int b) { boneInfos[b].CurrentKeyframe++; }
+            public void SetBoneKeyframe(int b, int k)
+            {
+                boneInfos[b].CurrentKeyframe = k;
+                if (k == Keyframes[b].Count - 1)
+                {
+                    boneInfos[b].NextKeyframe = k;
+                }
+                else
+                {
+                    boneInfos[b].NextKeyframe = k + 1;
+                }
+            }
             public void SetBoneValid(int b, bool v) { boneInfos[b].Valid = v; }
             public void SetBoneRotation(int b, Quaternion r) { boneInfos[b].Rotation = r; }
             public void SetBoneTranslation(int b, Vector3 t) { boneInfos[b].Translation = t; }
