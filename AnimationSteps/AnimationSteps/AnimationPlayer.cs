@@ -31,6 +31,51 @@ namespace AnimationSteps
         /// </summary>
         public double Speed { get { return speed; } set { speed = value; } }
 
+        public interface Bone
+        {
+            bool Valid { get; set; }
+            Quaternion Rotation { get; set; }
+            Vector3 Translation { get; set; }
+        }
+
+        private struct BoneInfo : Bone
+        {
+            private int currentKeyframe;     // Current keyframe for bone
+            private int nextKeyframe;
+
+            private bool valid;
+
+            private Quaternion rotation;
+            private Vector3 translation;
+
+            public int CurrentKeyframe { get { return currentKeyframe; } set { currentKeyframe = value; } }
+            public int NextKeyframe { get { return nextKeyframe; } set { nextKeyframe = value; } }
+            public bool Valid { get { return valid; } set { valid = value; } }
+            public Quaternion Rotation { get { return rotation; } set { rotation = value; } }
+            public Vector3 Translation { get { return translation; } set { translation = value; } }
+        }
+
+        private BoneInfo[] boneInfos;
+        private int boneCnt;
+
+        public Bone GetBone(int b) { return boneInfos[b]; }
+        public int BoneCount { get { return boneCnt; } }
+        public void SetBoneKeyframe(int b, int k)
+        {
+            boneInfos[b].CurrentKeyframe = k;
+            if (k == clip.Keyframes[b].Count - 1)
+            {
+                boneInfos[b].NextKeyframe = k;
+            }
+            else
+            {
+                boneInfos[b].NextKeyframe = k + 1;
+            }
+        }
+        public void SetBoneValid(int b, bool v) { boneInfos[b].Valid = v; }
+        public void SetBoneRotation(int b, Quaternion r) { boneInfos[b].Rotation = r; }
+        public void SetBoneTranslation(int b, Vector3 t) { boneInfos[b].Translation = t; }
+
         public AnimationPlayer(AnimationClips.Clip clip)
         {
             this.clip = clip;
@@ -38,8 +83,16 @@ namespace AnimationSteps
 
         public void Initialize()
         {
-            time = 0;
-            clip.Initialize();
+            time = 0; 
+            boneCnt = clip.Keyframes.Length;
+            boneInfos = new BoneInfo[boneCnt];
+
+            for (int b = 0; b < boneCnt; b++)
+            {
+                boneInfos[b].CurrentKeyframe = -1;
+                boneInfos[b].NextKeyframe = -1;
+                boneInfos[b].Valid = false;
+            }
         }
 
         public void Update(double delta)
@@ -57,11 +110,10 @@ namespace AnimationSteps
 
             if (time > clip.Duration)
             {
-                time = 0;
-                clip.Initialize();
+                Initialize();
             }
 
-            for (int b = 0; b < clip.BoneCount; b++)
+            for (int b = 0; b < BoneCount; b++)
             {
                 List<AnimationClips.Keyframe> keyframes = clip.Keyframes[b];
                 if (keyframes.Count == 0)
@@ -70,19 +122,19 @@ namespace AnimationSteps
                 // The time needs to be greater than or equal to the
                 // current keyframe time and less than the next keyframe 
                 // time.
-                while (clip.GetBone(b).CurrentKeyframe < 0 ||
-                    (clip.GetBone(b).CurrentKeyframe < keyframes.Count - 1 &&
-                    keyframes[clip.GetBone(b).CurrentKeyframe + 1].Time <= time))
+                while (boneInfos[b].CurrentKeyframe < 0 ||
+                    (boneInfos[b].CurrentKeyframe < keyframes.Count - 1 &&
+                    keyframes[boneInfos[b].CurrentKeyframe + 1].Time <= time))
                 {
                     // Advance to the next keyframe
-                    clip.SetBoneKeyframe(b, clip.GetBone(b).CurrentKeyframe + 1);
+                    SetBoneKeyframe(b, boneInfos[b].CurrentKeyframe + 1);
                 }
 
                 //
                 // Update the bone
                 //
-                int c = clip.GetBone(b).CurrentKeyframe;
-                int n = clip.GetBone(b).NextKeyframe;
+                int c = boneInfos[b].CurrentKeyframe;
+                int n = boneInfos[b].NextKeyframe;
                 if (c >= 0)
                 {
                     Quaternion rotation;
@@ -104,13 +156,13 @@ namespace AnimationSteps
                     }
                     //AnimationClips.Keyframe keyframeNext = keyframes[c + 1];
 
-                    /*clip.GetBone(b).Valid = true;
-                    clip.GetBone(b).Rotation = keyframe.Rotation;
-                    clip.GetBone(b).Translation = keyframe.Translation;*/
+                    /*clip.boneInfos[b].Valid = true;
+                    clip.boneInfos[b].Rotation = keyframe.Rotation;
+                    clip.boneInfos[b].Translation = keyframe.Translation;*/
 
-                    clip.SetBoneValid(b, true);
-                    clip.SetBoneRotation(b, rotation);
-                    clip.SetBoneTranslation(b, translation);
+                    SetBoneValid(b, true);
+                    SetBoneRotation(b, rotation);
+                    SetBoneTranslation(b, translation);
                 }
             }
         }

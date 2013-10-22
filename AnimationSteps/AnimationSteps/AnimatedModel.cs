@@ -105,9 +105,9 @@ namespace AnimationSteps
                 // Update the clip
                 player.Update(delta);
 
-                for (int b = 0; b < clip.BoneCount; b++)
+                for (int b = 0; b < player.BoneCount; b++)
                 {
-                    AnimationClips.Bone bone = clip.GetBone(b);
+                    AnimationPlayer.Bone bone = player.GetBone(b) ;
                     if (!bone.Valid)
                         continue;
 
