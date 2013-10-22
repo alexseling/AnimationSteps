@@ -24,9 +24,10 @@ namespace XnaAux
 
         public interface Bone
         {
-            bool Valid { get; }
-            Quaternion Rotation { get; }
-            Vector3 Translation { get; }
+            bool Valid { get; set; }
+            Quaternion Rotation { get; set; }
+            Vector3 Translation { get; set; }
+            int CurrentKeyframe { get; set; }
         }
 
         /// <summary>
@@ -49,15 +50,6 @@ namespace XnaAux
             /// </summary>
             public double Duration;
 
-
-            private bool looping = false;
-            private double speed = 1.0f;
-
-            private double time = 0;
-
-            public double Time { get { return time; } set { time = value; } }
-
-
             private struct BoneInfo : Bone
             {
                 private int currentKeyframe;     // Current keyframe for bone
@@ -77,22 +69,16 @@ namespace XnaAux
 
             public int BoneCount { get { return boneCnt; } }
             public Bone GetBone(int b) { return boneInfos[b]; }
+            public void IncrementBoneKeyframe(int b) { boneInfos[b].CurrentKeyframe++; }
+            public void SetBoneValid(int b, bool v) { boneInfos[b].Valid = v; }
+            public void SetBoneRotation(int b, Quaternion r) { boneInfos[b].Rotation = r; }
+            public void SetBoneTranslation(int b, Vector3 t) { boneInfos[b].Translation = t; }
 
             /// <summary>
             /// The keyframes in the animation. We have an array of bones
             /// each with a list of keyframes.
             /// </summary>
             public List<Keyframe>[] Keyframes;
-
-            /// <summary>
-            /// Indicates if the playback should "loop" or not.
-            /// </summary>
-            public bool Looping { get { return looping; } set { looping = value; } }
-
-            /// <summary>
-            /// Playback speed
-            /// </summary>
-            public double Speed { get { return speed; } set { speed = value; } }
 
             /// <summary>
             /// Initialize for use
@@ -102,56 +88,12 @@ namespace XnaAux
                 boneCnt = Keyframes.Length;
                 boneInfos = new BoneInfo[boneCnt];
 
-                time = 0;
                 for (int b = 0; b < boneCnt; b++)
                 {
                     boneInfos[b].CurrentKeyframe = -1;
                     boneInfos[b].Valid = false;
                 }
             }
-
-
-            /// <summary>
-            /// Update the clip position
-            /// </summary>
-            /// <param name="delta">The amount of time that has passed.</param>
-            public void Update(double delta)
-            {
-                time += delta;
-
-                for (int b = 0; b < boneInfos.Length; b++)
-                {
-                    List<AnimationClips.Keyframe> keyframes = Keyframes[b];
-                    if (keyframes.Count == 0)
-                        continue;
-
-                    // The time needs to be greater than or equal to the
-                    // current keyframe time and less than the next keyframe 
-                    // time.
-                    while (boneInfos[b].CurrentKeyframe < 0 ||
-                        (boneInfos[b].CurrentKeyframe < keyframes.Count - 1 &&
-                        keyframes[boneInfos[b].CurrentKeyframe + 1].Time <= time))
-                    {
-                        // Advance to the next keyframe
-                        boneInfos[b].CurrentKeyframe++;
-                    }
-
-                    //
-                    // Update the bone
-                    //
-
-                    int c = boneInfos[b].CurrentKeyframe;
-                    if (c >= 0)
-                    {
-                        AnimationClips.Keyframe keyframe = keyframes[c];
-                        boneInfos[b].Valid = true;
-                        boneInfos[b].Rotation = keyframe.Rotation;
-                        boneInfos[b].Translation = keyframe.Translation;
-                    }
-                }
-            }
-
         }
-
     }
 }

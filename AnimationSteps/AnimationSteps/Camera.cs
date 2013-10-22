@@ -27,7 +27,7 @@ namespace AnimationSteps
         public float Znear { get { return znear; } set { znear = value; ComputeView(); } }
         public float Zfar { get { return zfar; } set { zfar = value; ComputeView(); } }
 
-        private MouseState lastMouseState;
+        //private MouseState lastMouseState;
 
         private bool mousePitchYaw = true;
         private bool padPitchYaw = true;
@@ -142,7 +142,7 @@ namespace AnimationSteps
 
         public void Update(GameTime gameTime)
         {
-            MouseState mouseState = Mouse.GetState();
+            /*MouseState mouseState = Mouse.GetState();
 
             if (mousePitchYaw && mouseState.LeftButton == ButtonState.Pressed &&
                 lastMouseState.LeftButton == ButtonState.Pressed)
@@ -169,7 +169,7 @@ namespace AnimationSteps
                 Pitch(gamePadState.ThumbSticks.Right.Y * 0.05f);
             }
 
-            lastMouseState = mouseState;
+            lastMouseState = mouseState;*/
         }
 
         private void ComputeProjection()

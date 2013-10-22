@@ -45,8 +45,6 @@ namespace AnimationSteps
         /// </summary>
         private string asset;
 
-        private float angle = 0;
-
         private AnimationClips.Clip clip = null;
         private AnimationPlayer player = null;
 
@@ -102,11 +100,10 @@ namespace AnimationSteps
         {
             double delta = gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (clip != null)
+            if (player != null && clip != null)
             {
                 // Update the clip
-                //player.Update(delta);
-                clip.Update(delta);
+                player.Update(delta);
 
                 for (int b = 0; b < clip.BoneCount; b++)
                 {
@@ -144,11 +141,9 @@ namespace AnimationSteps
             if (clips != null)
             {
                 clip = clips.Clips[name];
-                clip.Initialize();
-        
-                /*clip = clips.Clips[name];
                 player = new AnimationPlayer(clip);
-                player.Initialize();*/
+                player.Looping = true;
+                player.Initialize();
             }
 
             return clip;

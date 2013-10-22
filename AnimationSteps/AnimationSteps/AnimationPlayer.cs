@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using XnaAux;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace AnimationSteps
 {
@@ -41,7 +42,20 @@ namespace AnimationSteps
 
         public void Update(double delta)
         {
-            /*time += delta;
+            MouseState mouseState = Mouse.GetState();
+            float height = GraphicsDeviceManager.DefaultBackBufferHeight;
+
+            if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                speed = ((height - mouseState.Y) / height) * 2;
+            }
+            time += delta * speed;
+
+            if (time > clip.Duration)
+            {
+                time = 0;
+                clip.Initialize();
+            }
 
             for (int b = 0; b < clip.BoneCount; b++)
             {
@@ -57,7 +71,7 @@ namespace AnimationSteps
                     keyframes[clip.GetBone(b).CurrentKeyframe + 1].Time <= time))
                 {
                     // Advance to the next keyframe
-                    clip.GetBone(b).CurrentKeyframe++;
+                    clip.IncrementBoneKeyframe(b);
                 }
 
                 //
@@ -68,11 +82,14 @@ namespace AnimationSteps
                 if (c >= 0)
                 {
                     AnimationClips.Keyframe keyframe = keyframes[c];
-                    clip.GetBone(b).Valid = true;
+                    /*clip.GetBone(b).Valid = true;
                     clip.GetBone(b).Rotation = keyframe.Rotation;
-                    clip.GetBone(b).Translation = keyframe.Translation;
+                    clip.GetBone(b).Translation = keyframe.Translation;*/
+                    clip.SetBoneValid(b, true);
+                    clip.SetBoneRotation(b, keyframe.Rotation);
+                    clip.SetBoneTranslation(b, keyframe.Translation);
                 }
-            }*/
+            }
         }
     }
 }
