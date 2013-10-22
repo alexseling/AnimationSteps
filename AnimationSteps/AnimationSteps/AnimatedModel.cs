@@ -161,6 +161,7 @@ namespace AnimationSteps
             DrawModel(graphics, model, transform);
         }
 
+
         private void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world)
         {
 

@@ -82,6 +82,8 @@ namespace AnimationSteps
                 if (c >= 0)
                 {
                     AnimationClips.Keyframe keyframe = keyframes[c];
+                    //AnimationClips.Keyframe keyframeNext = keyframes[c + 1];
+
                     /*clip.GetBone(b).Valid = true;
                     clip.GetBone(b).Rotation = keyframe.Rotation;
                     clip.GetBone(b).Translation = keyframe.Translation;*/

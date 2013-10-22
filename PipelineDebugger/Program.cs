@@ -85,7 +85,7 @@ namespace PipelineDebugger
         ///       Example:
         ///               private const string ProjectToDebug = @"C:\XNA Samples\SkinnedModelExtensions\SkinningSample\Content\SkinningSampleContent.contentproj";
         /// </summary>
-        private const string ProjectToDebug = @"S:\Documents\VS2010\AnimationSteps\AnimationSteps\AnimationStepsContent\AnimationStepsContent.contentproj";
+        private const string ProjectToDebug = @"S:\Documents\GitHub\AnimationSteps\AnimationSteps\AnimationStepsContent\AnimationStepsContent.contentproj";
 
         /// <summary>
         /// TODO: Change this to the content item you want to debug. The content pipeline will only

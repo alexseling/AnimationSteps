@@ -1,4 +1,0 @@
-Content\Digger.xnb
-Content\FBX\44B220FC\Digger.fbm\RightLogo_0.xnb
-Content\FBX\44B220FC\Digger.fbm\LeftLogo_0.xnb
-Content\FBX\44B220FC\Digger.fbm\Company_0.xnb

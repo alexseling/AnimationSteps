@@ -53,6 +53,8 @@ namespace XnaAux
             private struct BoneInfo : Bone
             {
                 private int currentKeyframe;     // Current keyframe for bone
+                private int nextKeyframe;
+
                 private bool valid;
 
                 private Quaternion rotation;

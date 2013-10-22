@@ -31,6 +31,9 @@ namespace AnimationPipeline
         /// </summary>
         private Dictionary<string, int> bones = new Dictionary<string, int>();
 
+        private const float TinyLength = 1e-8f;
+        private const float TinyCosAngle = 0.9999999f;
+
         public override ModelContent Process(NodeContent input, ContentProcessorContext context)
         {
             model = base.Process(input, context);
@@ -55,13 +58,24 @@ namespace AnimationPipeline
             // index into the list of bones from a bone name.
             for (int i = 0; i < model.Bones.Count; i++)
             {
-                bones[model.Bones[i].Name] = i;
+                bones[model.Bones[i].Name] = i; 
+
             }
 
             AnimationClips animationClips = new AnimationClips();
-
             ProcessAnimationsRecursive(input, animationClips);
             return animationClips;
+        }
+
+        // Check if the bone at boneId is useless
+        public bool UselessAnimationTest(int boneId)
+        {
+            foreach (ModelMeshContent mesh in model.Meshes)
+            {
+                if (mesh.ParentBone.Index == boneId)
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -72,7 +86,6 @@ namespace AnimationPipeline
         /// <param name="animationClips">The animation clips object we put animation in</param>
         private void ProcessAnimationsRecursive(NodeContent input, AnimationClips animationClips)
         {
-            //System.Diagnostics.Trace.WriteLine(input.Name);
             foreach (KeyValuePair<string, AnimationContent> animation in input.Animations)
             {
                 // Do we have this animation before?
@@ -98,10 +111,14 @@ namespace AnimationPipeline
 
                 foreach (KeyValuePair<string, AnimationChannel> channel in animation.Value.Channels)
                 {
+                    LinkedList<AnimationClips.Keyframe> keyframes = new LinkedList<AnimationClips.Keyframe>();
                     // What is the bone index?
                     int boneIndex;
                     if (!bones.TryGetValue(channel.Key, out boneIndex))
                         continue;           // Ignore if not a named bone
+
+                    if (UselessAnimationTest(boneIndex))
+                        continue;
 
                     foreach (AnimationKeyframe keyframe in channel.Value)
                     {
@@ -116,10 +133,17 @@ namespace AnimationPipeline
                         newKeyframe.Rotation = Quaternion.CreateFromRotationMatrix(transform);
                         newKeyframe.Translation = transform.Translation;
 
-                        clip.Keyframes[boneIndex].Add(newKeyframe);
+                        keyframes.AddLast(newKeyframe);
+                    }
+
+                    LinearKeyframeReduction(keyframes);
+                    foreach (AnimationClips.Keyframe k in keyframes)
+                    {
+                        clip.Keyframes[boneIndex].Add(k);
                     }
                 }
             }
+
 
             foreach (NodeContent child in input.Children)
             {
@@ -128,5 +152,37 @@ namespace AnimationPipeline
 
         }
 
+        // Remove linear keyframes from a linked list of keyframes
+        private void LinearKeyframeReduction(LinkedList<AnimationClips.Keyframe> keyframes)
+        {
+            if (keyframes.Count < 3)
+                return;
+
+            for (LinkedListNode<AnimationClips.Keyframe> node = keyframes.First.Next; ; )
+            {
+                LinkedListNode<AnimationClips.Keyframe> next = node.Next;
+                if (next == null)
+                    break;
+
+                // Determine nodes before and after the current node.
+                AnimationClips.Keyframe a = node.Previous.Value;
+                AnimationClips.Keyframe b = node.Value;
+                AnimationClips.Keyframe c = next.Value;
+
+                float t = (float)((node.Value.Time - node.Previous.Value.Time) /
+                                   (next.Value.Time - node.Previous.Value.Time));
+
+                Vector3 translation = Vector3.Lerp(a.Translation, c.Translation, t);
+                Quaternion rotation = Quaternion.Slerp(a.Rotation, c.Rotation, t);
+
+                if ((translation - b.Translation).LengthSquared() < TinyLength &&
+                   Quaternion.Dot(rotation, b.Rotation) > TinyCosAngle)
+                {
+                    keyframes.Remove(node);
+                }
+
+                node = next;
+            }
+        }
     }
 }
