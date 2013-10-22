@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimationSteps", "AnimationSteps\AnimationSteps\AnimationSteps.csproj", "{008EFDAC-A83D-4C11-907C-3A56879E7022}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EF64C7B0-5DBF-46A6-8727-434402FB1FD0} = {EF64C7B0-5DBF-46A6-8727-434402FB1FD0}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimationStepsContent", "AnimationSteps\AnimationStepsContent\AnimationStepsContent.contentproj", "{20ADCFA8-7C35-41EF-9E3C-32171B251402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimationPipeline", "AnimationPipeline\AnimationPipeline.csproj", "{EF64C7B0-5DBF-46A6-8727-434402FB1FD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelineDebugger", "PipelineDebugger\PipelineDebugger.csproj", "{1D6C6A4A-36D5-4B80-B339-2A7BAA843B29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XnaAux", "XnaAux\XnaAux.csproj", "{E869A93D-59BC-449C-B061-6091378C4DE2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{008EFDAC-A83D-4C11-907C-3A56879E7022}.Debug|x86.ActiveCfg = Debug|x86
+		{008EFDAC-A83D-4C11-907C-3A56879E7022}.Debug|x86.Build.0 = Debug|x86
+		{008EFDAC-A83D-4C11-907C-3A56879E7022}.Release|x86.ActiveCfg = Release|x86
+		{008EFDAC-A83D-4C11-907C-3A56879E7022}.Release|x86.Build.0 = Release|x86
+		{20ADCFA8-7C35-41EF-9E3C-32171B251402}.Debug|x86.ActiveCfg = Debug|x86
+		{20ADCFA8-7C35-41EF-9E3C-32171B251402}.Release|x86.ActiveCfg = Release|x86
+		{EF64C7B0-5DBF-46A6-8727-434402FB1FD0}.Debug|x86.ActiveCfg = Debug|x86
+		{EF64C7B0-5DBF-46A6-8727-434402FB1FD0}.Debug|x86.Build.0 = Debug|x86
+		{EF64C7B0-5DBF-46A6-8727-434402FB1FD0}.Release|x86.ActiveCfg = Release|x86
+		{EF64C7B0-5DBF-46A6-8727-434402FB1FD0}.Release|x86.Build.0 = Release|x86
+		{1D6C6A4A-36D5-4B80-B339-2A7BAA843B29}.Debug|x86.ActiveCfg = Debug|x86
+		{1D6C6A4A-36D5-4B80-B339-2A7BAA843B29}.Debug|x86.Build.0 = Debug|x86
+		{1D6C6A4A-36D5-4B80-B339-2A7BAA843B29}.Release|x86.ActiveCfg = Release|x86
+		{1D6C6A4A-36D5-4B80-B339-2A7BAA843B29}.Release|x86.Build.0 = Release|x86
+		{E869A93D-59BC-449C-B061-6091378C4DE2}.Debug|x86.ActiveCfg = Debug|x86
+		{E869A93D-59BC-449C-B061-6091378C4DE2}.Debug|x86.Build.0 = Debug|x86
+		{E869A93D-59BC-449C-B061-6091378C4DE2}.Release|x86.ActiveCfg = Release|x86
+		{E869A93D-59BC-449C-B061-6091378C4DE2}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
